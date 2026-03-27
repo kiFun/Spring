@@ -32,3 +32,10 @@ spring:
             - Path=/api/notification/**
           filters:
             - StripPrefix=1
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.gateway.handler: DEBUG
+    org.springframework.cloud.gateway.route: DEBUG
+    org.springframework.cloud.client.discovery: DEBUG
+    com.netflix.discovery: DEBUG
