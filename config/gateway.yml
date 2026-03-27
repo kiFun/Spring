@@ -32,6 +32,17 @@ spring:
             - Path=/api/notification/**
           filters:
             - StripPrefix=1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: gateway, health, info, metrics
+      base-path: /actuator
+  endpoint:
+    gateway:
+      enabled: true
+
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
