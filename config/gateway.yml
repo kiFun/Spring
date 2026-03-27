@@ -24,7 +24,11 @@ spring:
           uri: lb://user-service
           predicates:
             - Path=/api/users/**
+          filters:
+            - StripPrefix=1
         - id: notification-service
           uri: lb://notification-service
           predicates:
             - Path=/api/notification/**
+          filters:
+            - StripPrefix=1
