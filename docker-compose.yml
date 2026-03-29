@@ -1,0 +1,103 @@
+version: "3.8"
+
+services:
+  config-server:
+    build: ./config-server
+    ports:
+      - "8888:8888"
+    networks:
+      - network
+    extra_hosts:
+      - "localhost:172.17.0.1"
+
+  eureka:
+    build: ./eureka
+    ports:
+      - "8761:8761"
+    depends_on:
+      - config-server
+    networks:
+      - network
+    extra_hosts:
+      - "localhost:172.17.0.1"
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - config-server
+      - eureka
+    networks:
+      - network
+    extra_hosts:
+      - "localhost:172.17.0.1"
+
+  kafka:
+    image: apache/kafka:latest
+    ports:
+      - "9092:9092"
+    networks:
+      - network
+    extra_hosts:
+      - "localhost:172.17.0.1"
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - config-server
+      - eureka
+      - kafka
+      - mail
+    networks:
+      - network
+    extra_hosts:
+      - "localhost:172.17.0.1"
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - config-server
+      - eureka
+      - kafka
+      - postgres
+    networks:
+      - network
+    extra_hosts:
+      - "localhost:172.17.0.1"
+
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - network
+    extra_hosts:
+      - "localhost:172.17.0.1"
+
+
+  mail:
+    image: maildev/maildev
+    ports:
+      - "1025:1025"
+      - "1080:1080"
+    networks:
+      - network
+    extra_hosts:
+      - "localhost:172.17.0.1"
+
+volumes:
+  postgres-data:
+
+networks:
+  network:
+    driver: bridge
